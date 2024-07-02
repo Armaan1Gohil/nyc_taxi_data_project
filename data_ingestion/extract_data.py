@@ -19,7 +19,7 @@ for link in links:
     print(f'{filename} download started')
     with requests.get(download_url, stream = True) as response:
         response.raise_for_status()
-        with open(filename, 'wb') as file:
+        with open(f'temp_pq/{filename}', 'wb') as file:
             for chunk in response.iter_content(chunk_size = 8192):
                 file.write(chunk)
     print(f'File {filename} downloaded')
@@ -27,8 +27,8 @@ for link in links:
     client = storage.Client()
     bucket = client.bucket(bucket_name)
     blob = bucket.blob(f'raw_pq/{filename}')
-    blob.upload_from_filename(filename)
+    blob.upload_from_filename(f'pq_temp/{filename}')
     print(f"Uploaded {filename} to GCS bucket {bucket_name}")
 
-    os.remove(filename)
+    os.remove(f'pq_temp/{filename}')
     print(f'File {filename} removed')
