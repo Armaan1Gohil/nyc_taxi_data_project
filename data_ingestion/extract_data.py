@@ -1,3 +1,12 @@
+import requests
+import os
+from google.cloud import storage
+from bs4 import BeautifulSoup
+
+url = 'https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page'
+load_dotenv()
+bucket_name = os.getenv('GCS_BUCKET_NAME')
+
 response = requests.get(url)
 html_content = response.text
 soup = BeautifulSoup(html_content, 'html.parser')
@@ -13,6 +22,7 @@ for link in links:
             for chunk in response.iter_content(chunk_size = 8192):
                 file.write(chunk)
     print(f'File {filename} downloaded')
+    
     client = storage.Client()
     bucket = client.bucket(bucket_name)
     blob = bucket.blob(f'raw_pq/{filename}')
