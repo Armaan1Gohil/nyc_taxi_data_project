@@ -2,6 +2,7 @@ import requests
 import os
 from google.cloud import storage
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 
 url = 'https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page'
 load_dotenv()
