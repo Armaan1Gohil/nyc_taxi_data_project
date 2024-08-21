@@ -1,0 +1,27 @@
+services:
+  ingestion:
+    build:
+      context: ./ingestion
+      dockerfile: ingestion.Dockerfile
+    container_name: data-ingestion
+    volumes:
+      - ./ingestion:/data_project/ingestion:rw
+      - ./raw_data:/data_project/raw_data:rw
+      - ./repartition/:/data_project/repartition:rw
+      - ./logs/:/data_project/logs:rw
+    ports:
+      - 8888:8888
+    stdin_open: true
+    tty: true
+  transformation:
+    build:
+      context: ./transformation
+      Dockerfile: transformation.Dockerfile
+    container_name: data-transformation
+    volumes:
+      - ./transformation:/data_project/transformation:rw
+      - ./raw_data:/data_project/raw_data:rw
+      - ./repartition/:/data_project/repartition:rw
+      - ./logs/:/data_project/logs:rw
+    ports:
+      - 8889:8888
