@@ -1,0 +1,13 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore logs folder
+logs/
+
+# Ignore data files
+raw_data/
+repartition/
+
+# Ignore jupyter checkpoints
+.ipynb_checkpoints/
