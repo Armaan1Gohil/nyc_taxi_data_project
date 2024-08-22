@@ -18,7 +18,7 @@ This project is designed to demonstrate a full data engineering pipeline using N
 
 This project is an excellent opportunity to explore the end-to-end data engineering process, from raw data acquisition to data processing and storage, while learning to deploy solutions across multiple cloud environments.
 
-## Stepa to Executiond
+## Steps to Execution
 
 ## STEP - 1
 Creating an Entity Relationship Diagram (ERD) consisting of fact table and dimension tables. This separation ensures efficient storage, retrieval, and analysis of large datasets.
