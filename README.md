@@ -1,7 +1,5 @@
 # NYC Taxi Data Engineering Project
 
-# NYC Taxi Data Engineering Project
-
 ## Introduction
 
 This project is designed to demonstrate a full data engineering pipeline using NYC taxi data. The project involves several key components, from data ingestion and transformation to storage and analysis, with deployment both locally and on cloud platforms.
