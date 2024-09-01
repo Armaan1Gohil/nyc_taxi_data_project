@@ -1,7 +1,6 @@
 import logging
 from web_scraping import get_latest_parquet_links
 from data_ingestion import download_parquet
-from data_repartition import repartition_parquet
 
 # Setup logging
 logging.basicConfig(
@@ -29,9 +28,6 @@ def main():
         year, month = file_name.split('_')[-1].split('.')[0].split('-')
 
         download_parquet(url, file_name, year, month, base_dir)
-        
-        no_of_partitions = 4
-        repartition_parquet(file_name, year, month, no_of_partitions, base_dir, output_dir)
 
 if __name__ == '__main__':
     main()
