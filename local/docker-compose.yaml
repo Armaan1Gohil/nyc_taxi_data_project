@@ -13,10 +13,11 @@ services:
       - 8888:8888
     stdin_open: true
     tty: true
+
   transformation:
     build:
       context: ./transformation
-      Dockerfile: transformation.Dockerfile
+      dockerfile: transformation.Dockerfile
     container_name: data-transformation
     volumes:
       - ./transformation:/data_project/transformation:rw
@@ -25,3 +26,9 @@ services:
       - ./logs/:/data_project/logs:rw
     ports:
       - 8889:8888
+      - 4040:4040
+      - 7070:7070
+    env_file:
+      - .env/spark.env
+    stdin_open: true
+    tty: true

@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 
+# Ignore .evn files
+*.env
+
 # Ignore logs folder
 logs/
 
