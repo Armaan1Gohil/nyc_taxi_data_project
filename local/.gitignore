@@ -14,3 +14,7 @@ repartition/
 
 # Ignore jupyter checkpoints
 .ipynb_checkpoints/
+
+# Ignore MinIO file
+*.minio.sys
+minio_data/

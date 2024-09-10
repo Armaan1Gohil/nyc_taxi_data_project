@@ -4,9 +4,8 @@ WORKDIR /data_project/ingestion
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
-
-RUN pip install --no-cache-dir jupyter 
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir jupyter 
 
 EXPOSE 8888
 

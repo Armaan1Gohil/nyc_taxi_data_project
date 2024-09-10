@@ -1,28 +1,49 @@
 services:
-  ingestion:
+  object-storage:
+    build:
+      context: ./minio_data
+      dockerfile: minio.Dockerfile
+    container_name: storage
+    volumes:
+      - ./minio_data:/data_project/data:rw
+    ports:
+      - 9000:9000
+      - 9001:9001
+    env_file:
+      - .env/minio.env
+    stdin_open: True
+    tty: True
+    restart: always
+
+  extraction:
     build:
       context: ./ingestion
       dockerfile: ingestion.Dockerfile
-    container_name: data-ingestion
+    container_name: extraction
     volumes:
       - ./ingestion:/data_project/ingestion:rw
       - ./raw_data:/data_project/raw_data:rw
-      - ./repartition/:/data_project/repartition:rw
       - ./logs/:/data_project/logs:rw
     ports:
       - 8888:8888
     stdin_open: true
     tty: true
+    depends_on:
+      - object-storage
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
 
   transformation:
     build:
       context: ./transformation
       dockerfile: transformation.Dockerfile
-    container_name: data-transformation
+    container_name: transformation
     volumes:
       - ./transformation:/data_project/transformation:rw
       - ./raw_data:/data_project/raw_data:rw
-      - ./repartition/:/data_project/repartition:rw
       - ./logs/:/data_project/logs:rw
     ports:
       - 8889:8888
@@ -32,3 +53,12 @@ services:
       - .env/spark.env
     stdin_open: true
     tty: true
+    restart: always
+    depends_on:
+      - object-storage
+      - extraction
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
