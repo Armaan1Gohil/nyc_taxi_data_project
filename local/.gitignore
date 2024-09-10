@@ -17,4 +17,4 @@ repartition/
 
 # Ignore MinIO file
 *.minio.sys
-minio_data/
+minio_data/data/
