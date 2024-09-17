@@ -30,11 +30,6 @@ services:
     tty: true
     depends_on:
       - object-storage
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
 
   transformation:
     build:
@@ -51,14 +46,13 @@ services:
       - 7070:7070
     env_file:
       - .env/spark.env
+      - .env/minio.env
+    environment:
+      MINIO_ROOT_USER: root
+      MINIO_ROOT_PASSWORD: password
     stdin_open: true
     tty: true
     restart: always
     depends_on:
       - object-storage
       - extraction
-    deploy:
-      resources:
-        limits:
-          cpus: '4.0'
-          memory: 4G
