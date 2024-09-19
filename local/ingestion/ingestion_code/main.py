@@ -1,34 +1,26 @@
-# main.py
-import logging
-from minio_utils import configure_minio, create_minio_bucket, upload_to_minio
-from web_scraper import scrape_urls
-from file_utils import process_and_upload_to_minio
+from bs4 import BeautifulSoup
+import requests
+from data_staging import DataProcessor
+from utils import setup_logging
 
-def setup_logging():
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler('logs/ingestion.log'),
-            logging.StreamHandler()
-        ]
-    )
-    return logging.getLogger(__name__)
+logger = setup_logging()
 
 def main():
-    # Configure MinIO and logging
-    s3 = configure_minio()
-    logger = setup_logging()
-
-    # Create bucket
-    bucket_name = 'data'
-    create_minio_bucket(s3, bucket_name, logger)
-
-    # Scrape URLs
+    # Initialize MinIO and DataProcessor
+    bucket_name = 'nyc-project'
+    data_processor = DataProcessor()
+    
+    # Create MinIO bucket if it doesn't exist
+    data_processor.minio_client.create_bucket(bucket_name)
+    
+    # Web scraping
     page_url = "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page"
-    headers = scrape_urls(page_url)
-
-    # Process and upload files
+    html_response = requests.get(page_url)
+    html_response.raise_for_status()
+    soup = BeautifulSoup(html_response.text, 'html.parser')
+    headers = soup.find_all('a', attrs={'title': 'Yellow Taxi Trip Records'})
+    
+    # Process and upload data
     data_till_year = 2019
     for link in headers:
         try:
@@ -36,9 +28,14 @@ def main():
             file_name = url.split('/')[-1]
             year, month = file_name.split('_')[-1].split('.')[0].split('-')
             if int(year) >= data_till_year:
-                process_and_upload_to_minio(url, file_name, year, month, s3, bucket_name, logger)
+                data_processor.process_and_upload_to_minio(url, file_name, year, month, bucket_name)
         except Exception as e:
             logger.error(f'Error processing file {file_name}: {e}')
+
+    # Upload local files
+    directory = './dim_table_data/'
+    s3_folder = 'dim_table_data'
+    data_processor.upload_local_files(directory, bucket_name, s3_folder)
 
 if __name__ == "__main__":
     main()

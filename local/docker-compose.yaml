@@ -1,4 +1,5 @@
 services:
+
   object-storage:
     build:
       context: ./minio_data
@@ -26,10 +27,26 @@ services:
       - ./logs/:/data_project/logs:rw
     ports:
       - 8888:8888
+    env_file:
+      - .env/minio.env
     stdin_open: true
     tty: true
     depends_on:
       - object-storage
+
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: metastorepassword
+  #     MYSQL_DATABASE: metastore_db
+  #     MYSQL_USER: metastore_user
+  #     MYSQL_PASSWORD: metastorepassword
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   ports:
+  #     - "3306:3306"
+  #   restart: always
 
   transformation:
     build:
@@ -56,3 +73,16 @@ services:
     depends_on:
       - object-storage
       - extraction
+
+  # trino:
+  #   hostname: trino
+  #   container_name: sql-engine
+  #   image: 'trinodb/trino:351'
+  #   ports:
+  #     - '8086:8080'
+  #   volumes:
+  #     - ./etc:/usr/lib/trino/etc:ro
+  #   depends_on:
+  #     - object-storage
+  #     - extraction
+  #     - warehouse
