@@ -4,19 +4,15 @@ __pycache__/
 
 # Ignore .evn files
 *.env
+!./env
 
 # Ignore logs folder
 logs/
-
-# Ignore data files
-raw_data/
-repartition/
 
 # Ignore jupyter checkpoints
 .ipynb_checkpoints/
 
 # Ignore MinIO file
 *.minio.sys
-minio_data/
-!minio_data
-!minio_data/minio.Dockerfile
+minio_data/iceberg
+minio_data/nyc-project
