@@ -4,7 +4,7 @@ __pycache__/
 
 # Ignore .evn files
 *.env
-!./env
+!.env/
 
 # Ignore logs folder
 logs/
