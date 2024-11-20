@@ -16,6 +16,13 @@ services:
     tty: true
     restart: always
 
+  nessie:
+    image: projectnessie/nessie:0.70.0
+    container_name: nessie
+    ports:
+      - "19120:19120"
+    restart: always
+
   extraction:
     build:
       context: ./ingestion
@@ -58,6 +65,7 @@ services:
     depends_on:
       - object-storage
       - extraction
+      - nessie
 
   # trino:
   #   hostname: trino

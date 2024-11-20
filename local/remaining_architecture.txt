@@ -1,0 +1,6 @@
+A storage layer - MinIO
+Metadata Management - Apache Hive Metastore
+Data Governance - Apache Atlas
+Monitoring & Oberservability - Prometheus & Grafana
+Orchestration - Airflow
+Data Quality - Great Expectations
