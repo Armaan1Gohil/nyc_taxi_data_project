@@ -76,7 +76,6 @@ services:
     container_name: transformation
     volumes:
       - ./transformation:/data_project/transformation:rw
-      - ./raw_data:/data_project/raw_data:rw
     ports:
       - "8889:8888"
       - "4040:4040"
