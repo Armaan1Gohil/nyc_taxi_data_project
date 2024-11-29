@@ -1,0 +1,111 @@
+services:
+
+  object-storage:
+    build:
+      context: ./minio_data
+      dockerfile: minio.Dockerfile
+    container_name: storage
+    volumes:
+      - ./minio_data:/data_project/data:rw
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - .env/minio.env
+    stdin_open: true
+    tty: true
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  extraction:
+    build:
+      context: ./ingestion
+      dockerfile: ingestion.Dockerfile
+    container_name: extraction
+    volumes:
+      - ./ingestion:/data_project/ingestion:rw
+    ports:
+      - "8888:8888"
+    env_file:
+      - .env/minio.env
+    stdin_open: true
+    tty: true
+    depends_on:
+      - object-storage
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    env_file:
+      - .env/postgres.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  nessie:
+    image: ghcr.io/projectnessie/nessie:0.100.2-java
+    container_name: nessie
+    env_file:
+      - .env/nessie.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      object-storage:
+        condition: service_healthy
+    ports:
+      - "19120:19120"
+    stdin_open: true
+    tty: true
+    restart: always
+
+  transformation:
+    build:
+      context: ./transformation
+      dockerfile: transformation.Dockerfile
+    container_name: transformation
+    volumes:
+      - ./transformation:/data_project/transformation:rw
+      - ./raw_data:/data_project/raw_data:rw
+    ports:
+      - "8889:8888"
+      - "4040:4040"
+      - "7070:7070"
+    env_file:
+      - .env/minio.env
+    stdin_open: true
+    tty: true
+    restart: always
+    depends_on:
+      - object-storage
+      - extraction
+      - postgres
+      - nessie
+
+  trino:
+    build:
+      context: ./trino
+      dockerfile: trino.Dockerfile
+    container_name: trino
+    ports:
+      - "8081:8080"
+    environment:
+      - TRINO_NODE_ID=trino
+      - TRINO_DATA_DIR=/data
+    volumes:
+      - ./trino/data:/data
+      - ./trino/etc:/etc/trino
+    depends_on:
+      - nessie
+      - object-storage
+    restart: always
