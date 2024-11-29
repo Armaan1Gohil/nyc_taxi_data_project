@@ -2,14 +2,6 @@
 __pycache__/
 *.pyc
 
-# Ignore .evn files
-*.env
-!.env/
-
-# Ignore logs folder
-logs/
-!.logs/
-
 # Ignore jupyter checkpoints
 .ipynb_checkpoints/
 
@@ -17,3 +9,6 @@ logs/
 *.minio.sys
 minio_data/iceberg
 minio_data/nyc-project
+
+# Ignore Postgres files
+/postgres
