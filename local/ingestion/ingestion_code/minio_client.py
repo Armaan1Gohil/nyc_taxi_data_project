@@ -1,44 +1,42 @@
-import logging
 import boto3
-from botocore.client import Config
 import os
-
-logger = logging.getLogger(__name__)
+from botocore.client import Config
+from botocore.exceptions import ClientError
 
 class MinioClient:
+    endpoint = 'http://object-storage:9000'
+    access_key = os.getenv('MINIO_ROOT_USER')
+    secret_key = os.getenv('MINIO_ROOT_PASSWORD')
+
     def __init__(self):
+        self.endpoint = MinioClient.endpoint
+        self.access_key = MinioClient.access_key
+        self.secret_key = MinioClient.secret_key
         self.s3 = boto3.client(
             's3',
-            endpoint_url='http://object-storage:9000',
-            aws_access_key_id=os.getenv('MINIO_ROOT_USER'),
-            aws_secret_access_key=os.getenv('MINIO_ROOT_PASSWORD'),
+            endpoint_url=self.endpoint,
+            aws_access_key_id=self.access_key,
+            aws_secret_access_key=self.secret_key,
             config=Config(signature_version='s3v4')
         )
+    
+    @classmethod
+    def set_credentials(cls, endpoint, access_key, secret_key):
+        cls.endpoint = endpoint
+        cls.access_key = access_key
+        cls.secret_key = secret_key
 
     def create_bucket(self, bucket_name):
         try:
             self.s3.head_bucket(Bucket=bucket_name)
-            logger.info(f'Bucket already exists: {bucket_name}')
-        except:
-            try:
+        except ClientError as e:
+            if e.response['Error']['Code'] == '404':
                 self.s3.create_bucket(Bucket=bucket_name)
-                logger.info(f'Bucket created successfully: {bucket_name}')
-            except Exception as e:
-                logger.error(f'Error creating bucket: {e}')
+            else:
                 raise
 
-    def upload_file(self, buffer, bucket_name, object_name):
+    def upload_file(self, bucket_name, object_name, file):
         try:
-            buffer.seek(0)
-            self.s3.put_object(Bucket=bucket_name, Key=object_name, Body=buffer.getvalue())
-            logger.info(f"Successfully uploaded to bucket '{bucket_name}': {object_name}")
-            buffer.close()
-        except Exception as e:
-            logger.error(f'Error uploading to MinIO: {e}')
-
-    def upload_local_file(self, local_path, bucket_name, s3_path):
-        try:
-            self.s3.upload_file(local_path, bucket_name, s3_path)
-            logger.info(f'Uploaded file: {local_path} to bucket: {bucket_name}')
-        except Exception as e:
-            logger.error(f'Error uploading local file to MinIO: {e}')
+            self.s3.put_object(Bucket=bucket_name, Key=object_name, Body=file)
+        except ClientError as e:
+            raise

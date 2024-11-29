@@ -1,41 +1,62 @@
 from bs4 import BeautifulSoup
 import requests
 from data_staging import DataProcessor
-from utils import setup_logging
-
-logger = setup_logging()
+from minio_client import MinioClient
+from web_scraper import WebScraper
+import os
+import pandas as pd
 
 def main():
     # Initialize MinIO and DataProcessor
     bucket_name = 'nyc-project'
-    data_processor = DataProcessor()
-    
-    # Create MinIO bucket if it doesn't exist
-    data_processor.minio_client.create_bucket(bucket_name)
-    
-    # Web scraping
     page_url = "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page"
-    html_response = requests.get(page_url)
-    html_response.raise_for_status()
-    soup = BeautifulSoup(html_response.text, 'html.parser')
-    headers = soup.find_all('a', attrs={'title': 'Yellow Taxi Trip Records'})
+    data_till_year = 2019
+
+    # Create MinIO bucket if it doesn't exist
+    minio_client = MinioClient()
+    minio_client.create_bucket(bucket_name)
+    
+    # Initiate Data Processor
+    data_processor = DataProcessor()
+
+    #Initial Webscraper
+    parquet_links = WebScraper(page_url)
+    headers = parquet_links.fetch_links(title_filter='Yellow Taxi Trip Records')
     
     # Process and upload data
-    data_till_year = 2019
     for link in headers:
-        try:
-            url = link.get('href').strip()
-            file_name = url.split('/')[-1]
-            year, month = file_name.split('_')[-1].split('.')[0].split('-')
-            if int(year) >= data_till_year:
-                data_processor.process_and_upload_to_minio(url, file_name, year, month, bucket_name)
-        except Exception as e:
-            logger.error(f'Error processing file {file_name}: {e}')
+        url = link.get('href').strip()
+        file_name = url.split('/')[-1]
+        year, month = file_name.split('_')[-1].split('.')[0].split('-')
+        if int(year) >= data_till_year:
+            parquet_buffer = data_processor.download_file(url)
+            parquet_path = f'raw-data/{year}/{month}/{file_name}'
+            minio_client.upload_file(bucket_name, parquet_path, parquet_buffer)
+    
+    # Dimension Tables Creation
+    dimension_path = 'raw-data/dim-table'
 
-    # Upload local files
-    directory = './dim_table_data/'
-    s3_folder = 'dim_table_data'
-    data_processor.upload_local_files(directory, bucket_name, s3_folder)
+    taxi_zone_lookup_url = 'https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv' # Download taxi zone dim table
+    taxi_zone_buffer = data_processor.download_file(taxi_zone_lookup_url)
+    minio_client.upload_file(bucket_name, f'{dimension_path}/taxi_zone_lookup.csv', taxi_zone_buffer)
+
+    rate_code_dim = {1: 'Standard rate', # Create rate code dim table
+                     2: 'JFK', 
+                     3: 'Newark', 
+                     4: 'Nassau or Westchester', 
+                     5: 'Negotiated fare', 
+                     6: 'Group ride'}
+    rate_code_df = pd.DataFrame(rate_code_dim, columns=['rate_code_id', 'location'])
+    minio_client.upload_file(bucket_name, f'{dimension_path}/rate_code.csv', rate_code_df.to_csv(index = False).encode('utf-8'))
+
+    payment_type_code_dim = {1: 'Credit card', # Create payment type dim table
+                             2: 'Cash',
+                             3: 'No charge',
+                             4: 'Dispute',
+                             5: 'Unknown',
+                             6: 'Voided trip'}
+    payment_code_df = pd.DataFrame(payment_type_code_dim, columns=['payment_code_id', 'payment_type'])
+    minio_client.upload_file(bucket_name, f'{dimension_path}/payment_code.csv', payment_code_df.to_csv(index = False).encode('utf-8'))
 
 if __name__ == "__main__":
     main()
