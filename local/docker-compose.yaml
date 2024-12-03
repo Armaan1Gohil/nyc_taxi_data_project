@@ -45,7 +45,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgres:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data:rw
+      - ./postgres/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
@@ -68,6 +69,12 @@ services:
     stdin_open: true
     tty: true
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:19120/api/v1/config || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   transformation:
     build:
@@ -92,19 +99,22 @@ services:
       - nessie
 
   trino:
-    build:
-      context: ./trino
-      dockerfile: trino.Dockerfile
+    image: trinodb/trino:latest
     container_name: trino
     ports:
-      - "8081:8080"
-    environment:
-      - TRINO_NODE_ID=trino
-      - TRINO_DATA_DIR=/data
+      - "8080:8080"
     volumes:
-      - ./trino/data:/data
-      - ./trino/etc:/etc/trino
+      - ./trino/etc:/etc/trino:rw
+      - ./trino/data:/var/trino:rw
+    env_file:
+      - .env/minio.env
+    environment:
+      - JAVA_TOOL_OPTIONS=-Duser.timezone=UTC
     depends_on:
-      - nessie
-      - object-storage
+      postgres:
+        condition: service_healthy
+      object-storage:
+        condition: service_healthy
+      nessie:
+        condition: service_healthy
     restart: always
