@@ -118,3 +118,29 @@ services:
       nessie:
         condition: service_healthy
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/info || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  superset:
+    build:
+      context: ./superset
+      dockerfile: superset.Dockerfile
+    container_name: superset
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./superset:/app/superset_home
+    env_file:
+      - .env/superset.env
+    depends_on:
+      trino:
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8088/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
