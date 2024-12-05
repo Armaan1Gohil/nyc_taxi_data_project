@@ -12,3 +12,4 @@ minio_data/nyc-project
 
 # Ignore Postgres files
 /postgres/
+!/postgres/init
