@@ -1,0 +1,73 @@
+{
+  "format-version" : 2,
+  "table-uuid" : "160dd578-408b-4834-9b5a-a34b4b59f388",
+  "location" : "${env.MINIO_WAREHOUSE}/nyc_project_db/pickup_datetime_table_46df51a4-ba05-4ec7-8147-0e418e7bed1b",
+  "last-sequence-number" : 0,
+  "last-updated-ms" : 1734086200801,
+  "last-column-id" : 7,
+  "current-schema-id" : 0,
+  "schemas" : [ {
+    "type" : "struct",
+    "schema-id" : 0,
+    "fields" : [ {
+      "id" : 1,
+      "name" : "pickup_datetime_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 2,
+      "name" : "pickup_datetime",
+      "required" : false,
+      "type" : "timestamptz"
+    }, {
+      "id" : 3,
+      "name" : "pickup_hour",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 4,
+      "name" : "pickup_day",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 5,
+      "name" : "pickup_month",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 6,
+      "name" : "pickup_year",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 7,
+      "name" : "pickup_weekday",
+      "required" : false,
+      "type" : "string"
+    } ]
+  } ],
+  "default-spec-id" : 0,
+  "partition-specs" : [ {
+    "spec-id" : 0,
+    "fields" : [ ]
+  } ],
+  "last-partition-id" : 999,
+  "default-sort-order-id" : 0,
+  "sort-orders" : [ {
+    "order-id" : 0,
+    "fields" : [ ]
+  } ],
+  "properties" : {
+    "owner" : "root",
+    "write.metadata.delete-after-commit.enabled" : "false",
+    "gc.enabled" : "false",
+    "write.parquet.compression-codec" : "zstd"
+  },
+  "current-snapshot-id" : -1,
+  "refs" : { },
+  "snapshots" : [ ],
+  "statistics" : [ ],
+  "partition-statistics" : [ ],
+  "snapshot-log" : [ ],
+  "metadata-log" : [ ]
+}

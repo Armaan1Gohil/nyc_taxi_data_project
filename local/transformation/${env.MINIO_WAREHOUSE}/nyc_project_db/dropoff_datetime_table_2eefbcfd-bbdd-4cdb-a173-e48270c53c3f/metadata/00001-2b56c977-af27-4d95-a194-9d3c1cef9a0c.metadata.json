@@ -1,0 +1,105 @@
+{
+  "format-version" : 2,
+  "table-uuid" : "5f6286a9-95bf-48c8-8ae5-b5bad476ebba",
+  "location" : "${env.MINIO_WAREHOUSE}/nyc_project_db/dropoff_datetime_table_2eefbcfd-bbdd-4cdb-a173-e48270c53c3f",
+  "last-sequence-number" : 1,
+  "last-updated-ms" : 1734086206018,
+  "last-column-id" : 7,
+  "current-schema-id" : 0,
+  "schemas" : [ {
+    "type" : "struct",
+    "schema-id" : 0,
+    "fields" : [ {
+      "id" : 1,
+      "name" : "dropoff_datetime_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 2,
+      "name" : "dropoff_datetime",
+      "required" : false,
+      "type" : "timestamptz"
+    }, {
+      "id" : 3,
+      "name" : "dropoff_hour",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 4,
+      "name" : "dropoff_day",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 5,
+      "name" : "dropoff_month",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 6,
+      "name" : "dropoff_year",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 7,
+      "name" : "dropoff_weekday",
+      "required" : false,
+      "type" : "string"
+    } ]
+  } ],
+  "default-spec-id" : 0,
+  "partition-specs" : [ {
+    "spec-id" : 0,
+    "fields" : [ ]
+  } ],
+  "last-partition-id" : 999,
+  "default-sort-order-id" : 0,
+  "sort-orders" : [ {
+    "order-id" : 0,
+    "fields" : [ ]
+  } ],
+  "properties" : {
+    "owner" : "root",
+    "write.metadata.delete-after-commit.enabled" : "false",
+    "nessie.commit.id" : "1a329f36618780f45a0a6251c7c7e05786066ef6cbb0e847f07d1ee0e2ed1ca9",
+    "gc.enabled" : "false",
+    "write.parquet.compression-codec" : "zstd"
+  },
+  "current-snapshot-id" : 945878553858133524,
+  "refs" : {
+    "main" : {
+      "snapshot-id" : 945878553858133524,
+      "type" : "branch"
+    }
+  },
+  "snapshots" : [ {
+    "sequence-number" : 1,
+    "snapshot-id" : 945878553858133524,
+    "timestamp-ms" : 1734086206018,
+    "summary" : {
+      "operation" : "append",
+      "spark.app.id" : "local-1734086111569",
+      "added-data-files" : "7",
+      "added-records" : "1102151",
+      "added-files-size" : "5674988",
+      "changed-partition-count" : "1",
+      "total-records" : "1102151",
+      "total-files-size" : "5674988",
+      "total-data-files" : "7",
+      "total-delete-files" : "0",
+      "total-position-deletes" : "0",
+      "total-equality-deletes" : "0"
+    },
+    "manifest-list" : "${env.MINIO_WAREHOUSE}/nyc_project_db/dropoff_datetime_table_2eefbcfd-bbdd-4cdb-a173-e48270c53c3f/metadata/snap-945878553858133524-1-5d519160-28de-47f4-8062-257e7fdcd970.avro",
+    "schema-id" : 0
+  } ],
+  "statistics" : [ ],
+  "partition-statistics" : [ ],
+  "snapshot-log" : [ {
+    "timestamp-ms" : 1734086206018,
+    "snapshot-id" : 945878553858133524
+  } ],
+  "metadata-log" : [ {
+    "timestamp-ms" : 1734086204247,
+    "metadata-file" : "${env.MINIO_WAREHOUSE}/nyc_project_db/dropoff_datetime_table_2eefbcfd-bbdd-4cdb-a173-e48270c53c3f/metadata/00000-9cf23c31-de62-4c2f-bc94-47908d052f55.metadata.json"
+  } ]
+}

@@ -1,0 +1,12 @@
+{
+    "databases": [
+      {
+        "allow_csv_upload": true,
+        "allow_ctas": true,
+        "allow_cvas": true,
+        "database_name": "Trino",
+        "sqlalchemy_uri": "trino://admin@trino:8080/nessie/nyc_project_db",
+        "expose_in_sqllab": true
+      }
+    ]
+  }

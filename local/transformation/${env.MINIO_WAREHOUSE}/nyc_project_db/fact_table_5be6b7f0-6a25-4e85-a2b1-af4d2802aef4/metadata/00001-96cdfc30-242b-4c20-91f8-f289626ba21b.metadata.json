@@ -1,0 +1,165 @@
+{
+  "format-version" : 2,
+  "table-uuid" : "d420c30d-06a1-4171-8530-891241373c34",
+  "location" : "${env.MINIO_WAREHOUSE}/nyc_project_db/fact_table_5be6b7f0-6a25-4e85-a2b1-af4d2802aef4",
+  "last-sequence-number" : 1,
+  "last-updated-ms" : 1734086213397,
+  "last-column-id" : 19,
+  "current-schema-id" : 0,
+  "schemas" : [ {
+    "type" : "struct",
+    "schema-id" : 0,
+    "fields" : [ {
+      "id" : 1,
+      "name" : "vendor_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 2,
+      "name" : "pickup_datetime_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 3,
+      "name" : "dropoff_datetime_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 4,
+      "name" : "pickup_location_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 5,
+      "name" : "dropoff_location_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 6,
+      "name" : "ratecode_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 7,
+      "name" : "passenger_count",
+      "required" : false,
+      "type" : "double"
+    }, {
+      "id" : 8,
+      "name" : "trip_distance",
+      "required" : false,
+      "type" : "float"
+    }, {
+      "id" : 9,
+      "name" : "payment_type_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 10,
+      "name" : "store_and_fwd_flag",
+      "required" : false,
+      "type" : "string"
+    }, {
+      "id" : 11,
+      "name" : "fare_amount",
+      "required" : false,
+      "type" : "float"
+    }, {
+      "id" : 12,
+      "name" : "extra",
+      "required" : false,
+      "type" : "float"
+    }, {
+      "id" : 13,
+      "name" : "mta_tax",
+      "required" : false,
+      "type" : "float"
+    }, {
+      "id" : 14,
+      "name" : "tip_amount",
+      "required" : false,
+      "type" : "float"
+    }, {
+      "id" : 15,
+      "name" : "tolls_amount",
+      "required" : false,
+      "type" : "float"
+    }, {
+      "id" : 16,
+      "name" : "improvement_surcharge",
+      "required" : false,
+      "type" : "float"
+    }, {
+      "id" : 17,
+      "name" : "congestion_surcharge",
+      "required" : false,
+      "type" : "float"
+    }, {
+      "id" : 18,
+      "name" : "airport_fee",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 19,
+      "name" : "total_amount",
+      "required" : false,
+      "type" : "float"
+    } ]
+  } ],
+  "default-spec-id" : 0,
+  "partition-specs" : [ {
+    "spec-id" : 0,
+    "fields" : [ ]
+  } ],
+  "last-partition-id" : 999,
+  "default-sort-order-id" : 0,
+  "sort-orders" : [ {
+    "order-id" : 0,
+    "fields" : [ ]
+  } ],
+  "properties" : {
+    "owner" : "root",
+    "write.metadata.delete-after-commit.enabled" : "false",
+    "nessie.commit.id" : "22e44a133133476f1cc7721cd862094e06a90dc98367d6f087ac228d4b7ad52c",
+    "gc.enabled" : "false",
+    "write.parquet.compression-codec" : "zstd"
+  },
+  "current-snapshot-id" : 3957242967345824596,
+  "refs" : {
+    "main" : {
+      "snapshot-id" : 3957242967345824596,
+      "type" : "branch"
+    }
+  },
+  "snapshots" : [ {
+    "sequence-number" : 1,
+    "snapshot-id" : 3957242967345824596,
+    "timestamp-ms" : 1734086213397,
+    "summary" : {
+      "operation" : "append",
+      "spark.app.id" : "local-1734086111569",
+      "added-data-files" : "1",
+      "added-records" : "3450090",
+      "added-files-size" : "24599728",
+      "changed-partition-count" : "1",
+      "total-records" : "3450090",
+      "total-files-size" : "24599728",
+      "total-data-files" : "1",
+      "total-delete-files" : "0",
+      "total-position-deletes" : "0",
+      "total-equality-deletes" : "0"
+    },
+    "manifest-list" : "${env.MINIO_WAREHOUSE}/nyc_project_db/fact_table_5be6b7f0-6a25-4e85-a2b1-af4d2802aef4/metadata/snap-3957242967345824596-1-c246a916-f289-4d65-a687-08c584d99b2e.avro",
+    "schema-id" : 0
+  } ],
+  "statistics" : [ ],
+  "partition-statistics" : [ ],
+  "snapshot-log" : [ {
+    "timestamp-ms" : 1734086213397,
+    "snapshot-id" : 3957242967345824596
+  } ],
+  "metadata-log" : [ {
+    "timestamp-ms" : 1734086206231,
+    "metadata-file" : "${env.MINIO_WAREHOUSE}/nyc_project_db/fact_table_5be6b7f0-6a25-4e85-a2b1-af4d2802aef4/metadata/00000-f18ec0a2-5f3d-47c8-8fcd-a580c113c7cf.metadata.json"
+  } ]
+}

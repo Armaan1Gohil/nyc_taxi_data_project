@@ -1,0 +1,73 @@
+{
+  "format-version" : 2,
+  "table-uuid" : "5f6286a9-95bf-48c8-8ae5-b5bad476ebba",
+  "location" : "${env.MINIO_WAREHOUSE}/nyc_project_db/dropoff_datetime_table_2eefbcfd-bbdd-4cdb-a173-e48270c53c3f",
+  "last-sequence-number" : 0,
+  "last-updated-ms" : 1734086204184,
+  "last-column-id" : 7,
+  "current-schema-id" : 0,
+  "schemas" : [ {
+    "type" : "struct",
+    "schema-id" : 0,
+    "fields" : [ {
+      "id" : 1,
+      "name" : "dropoff_datetime_id",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 2,
+      "name" : "dropoff_datetime",
+      "required" : false,
+      "type" : "timestamptz"
+    }, {
+      "id" : 3,
+      "name" : "dropoff_hour",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 4,
+      "name" : "dropoff_day",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 5,
+      "name" : "dropoff_month",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 6,
+      "name" : "dropoff_year",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 7,
+      "name" : "dropoff_weekday",
+      "required" : false,
+      "type" : "string"
+    } ]
+  } ],
+  "default-spec-id" : 0,
+  "partition-specs" : [ {
+    "spec-id" : 0,
+    "fields" : [ ]
+  } ],
+  "last-partition-id" : 999,
+  "default-sort-order-id" : 0,
+  "sort-orders" : [ {
+    "order-id" : 0,
+    "fields" : [ ]
+  } ],
+  "properties" : {
+    "owner" : "root",
+    "write.metadata.delete-after-commit.enabled" : "false",
+    "gc.enabled" : "false",
+    "write.parquet.compression-codec" : "zstd"
+  },
+  "current-snapshot-id" : -1,
+  "refs" : { },
+  "snapshots" : [ ],
+  "statistics" : [ ],
+  "partition-statistics" : [ ],
+  "snapshot-log" : [ ],
+  "metadata-log" : [ ]
+}

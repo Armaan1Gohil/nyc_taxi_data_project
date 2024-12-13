@@ -1,0 +1,28 @@
+
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+2024-12-13 11:37:28.436 UTC [1] LOG:  starting PostgreSQL 17.2 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit
+2024-12-13 11:37:28.436 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2024-12-13 11:37:28.436 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2024-12-13 11:37:28.437 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2024-12-13 11:37:28.441 UTC [30] LOG:  database system was shut down at 2024-12-13 11:37:15 UTC
+2024-12-13 11:37:28.446 UTC [1] LOG:  database system is ready to accept connections
+2024-12-13 11:42:28.533 UTC [28] LOG:  checkpoint starting: time
+2024-12-13 11:42:28.746 UTC [28] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.206 s, sync=0.003 s, total=0.214 s; sync files=4, longest=0.002 s, average=0.001 s; distance=10 kB, estimate=10 kB; lsn=0/1DCDDA0, redo lsn=0/1DCDD48
+2024-12-13 11:50:03.641 UTC [1] LOG:  received fast shutdown request
+2024-12-13 11:50:03.642 UTC [1] LOG:  aborting any active transactions
+2024-12-13 11:50:03.642 UTC [41] FATAL:  terminating connection due to administrator command
+2024-12-13 11:50:03.645 UTC [1] LOG:  background worker "logical replication launcher" (PID 33) exited with exit code 1
+2024-12-13 11:50:03.647 UTC [28] LOG:  shutting down
+2024-12-13 11:50:03.648 UTC [28] LOG:  checkpoint starting: shutdown immediate
+2024-12-13 11:50:03.652 UTC [28] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.005 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=9 kB; lsn=0/1DCDE50, redo lsn=0/1DCDE50
+2024-12-13 11:50:03.659 UTC [1] LOG:  database system is shut down
+
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+2024-12-13 11:50:03.977 UTC [1] LOG:  starting PostgreSQL 17.2 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit
+2024-12-13 11:50:03.977 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2024-12-13 11:50:03.977 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2024-12-13 11:50:03.978 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2024-12-13 11:50:03.982 UTC [29] LOG:  database system was shut down at 2024-12-13 11:50:03 UTC
+2024-12-13 11:50:03.986 UTC [1] LOG:  database system is ready to accept connections
