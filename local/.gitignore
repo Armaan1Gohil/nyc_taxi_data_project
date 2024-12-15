@@ -13,4 +13,4 @@ minio_data/nyc-project
 # Ignore Postgres files
 /postgres/
 !/postgres/init
-!/postgres/postgres.Dcokerfile
+!/postgres/postgres.Dockerfile
