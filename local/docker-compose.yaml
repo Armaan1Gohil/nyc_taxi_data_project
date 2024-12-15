@@ -21,6 +21,28 @@ services:
       timeout: 5s
       retries: 5
 
+  airflow:
+    build: 
+      context: ./airflow
+      dockerfile: airflow.Dockerfile
+    container_name: airflow
+    ports: 
+      - "8081:8081"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+    env_file:
+      - ./.env/airflow.env
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    stdin_open: true
+    tty: true
+
   extraction:
     build:
       context: ./ingestion
@@ -124,7 +146,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  
+
   superset:
     build:
       context: ./superset
@@ -137,12 +159,16 @@ services:
         condition: service_healthy
       nessie:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     env_file: 
       - .env/postgres.env
-    environment:
-      SUPERSET_SECRET_KEY: 'your_secret_key'
-      SQLALCHEMY_DATABASE_URI: 'postgresql+psycopg2://nessie:nessie@postgres:5432/superset'
-      SUPERSET_LOAD_EXAMPLES: 'no'
+      - .env/superset.env
     ports:
       - "8088:8088"
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8088/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
