@@ -1,174 +1,198 @@
-services:
+  services:
 
-  object-storage:
-    build:
-      context: ./minio_data
-      dockerfile: minio.Dockerfile
-    container_name: storage
-    volumes:
-      - ./minio_data:/data_project/data:rw
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    env_file:
-      - .env/minio.env
-    stdin_open: true
-    tty: true
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    object-storage:
+      build:
+        context: ./minio_data
+        dockerfile: minio.Dockerfile
+      container_name: storage
+      volumes:
+        - ./minio_data:/data_project/data:rw
+      ports:
+        - "9000:9000"
+        - "9001:9001"
+      env_file:
+        - .env/minio.env
+      stdin_open: true
+      tty: true
+      restart: always
+      healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
-  airflow:
-    build: 
-      context: ./airflow
-      dockerfile: airflow.Dockerfile
-    container_name: airflow
-    ports: 
-      - "8081:8081"
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
-    env_file:
-      - ./.env/airflow.env
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8081/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    stdin_open: true
-    tty: true
+    airflow:
+      build: 
+        context: ./airflow
+        dockerfile: airflow.Dockerfile
+      container_name: airflow
+      env_file:
+        - .env/airflow.env
+      volumes:
+        - ./airflow/dags:/opt/airflow/dags
+        - ./airflow/plugins:/opt/airflow/plugins
+        - ./airflow/logs:/opt/airflow/logs
+      ports:
+        - "8081:8080"
+      healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+        interval: 10s
+        timeout: 5s
+        retries: 3
+      depends_on:
+        postgres:
+          condition: service_healthy
+    airflow-scheduler:
+      build: 
+        context: ./airflow
+        dockerfile: airflow-scheduler.Dockerfile
+      container_name: airflow-scheduler
+      volumes:
+        - ./airflow/dags:/opt/airflow/dags
+        - ./airflow/plugins:/opt/airflow/plugins
+        - ./airflow/logs:/opt/airflow/logs
+      env_file:
+        - .env/airflow.env
+      depends_on:
+        - postgres
 
-  extraction:
-    build:
-      context: ./ingestion
-      dockerfile: ingestion.Dockerfile
-    container_name: extraction
-    volumes:
-      - ./ingestion:/data_project/ingestion:rw
-    ports:
-      - "8888:8888"
-    env_file:
-      - .env/minio.env
-    stdin_open: true
-    tty: true
-    depends_on:
-      - object-storage
+    extraction:
+      build:
+        context: ./ingestion
+        dockerfile: ingestion.Dockerfile
+      container_name: extraction
+      volumes:
+        - ./ingestion:/data_project/ingestion:rw
+      ports:
+        - "8888:8888"
+      env_file:
+        - .env/minio.env
+      stdin_open: true
+      tty: true
+      depends_on:
+        object-storage:
+          condition: service_healthy
+        airflow:
+          condition: service_healthy
 
-  postgres:
-    build: 
-      context: ./postgres
-      dockerfile: postgres.Dockerfile
-    container_name: postgres
-    env_file:
-      - .env/postgres.env
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./postgres:/var/lib/postgresql/data:rw
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+    postgres:
+      build: 
+        context: ./postgres
+        dockerfile: postgres.Dockerfile
+      container_name: postgres
+      env_file:
+        - .env/postgres.env
+      ports:
+        - "5432:5432"
+      volumes:
+        - ./postgres:/var/lib/postgresql/data:rw
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+        start_period: 30s
 
-  nessie:
-    image: ghcr.io/projectnessie/nessie:0.100.2-java
-    container_name: nessie
-    env_file:
-      - .env/nessie.env
-    depends_on:
-      postgres:
-        condition: service_healthy
-      object-storage:
-        condition: service_healthy
-    ports:
-      - "19120:19120"
-    stdin_open: true
-    tty: true
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:19120/api/v1/config || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+    nessie:
+      image: ghcr.io/projectnessie/nessie:0.100.2-java
+      container_name: nessie
+      env_file:
+        - .env/nessie.env
+      depends_on:
+        postgres:
+          condition: service_healthy
+        object-storage:
+          condition: service_healthy
+        airflow:
+          condition: service_healthy
+      ports:
+        - "19120:19120"
+      stdin_open: true
+      tty: true
+      restart: always
+      healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost:19120/api/v1/config || exit 1"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+        start_period: 30s
 
-  transformation:
-    build:
-      context: ./transformation
-      dockerfile: transformation.Dockerfile
-    container_name: transformation
-    volumes:
-      - ./transformation:/data_project/transformation:rw
-    ports:
-      - "8889:8888"
-      - "4040:4040"
-      - "7070:7070"
-    env_file:
-      - .env/minio.env
-    stdin_open: true
-    tty: true
-    restart: always
-    depends_on:
-      - object-storage
-      - extraction
-      - postgres
-      - nessie
+    transformation:
+      build:
+        context: ./transformation
+        dockerfile: transformation.Dockerfile
+      container_name: transformation
+      volumes:
+        - ./transformation:/data_project/transformation:rw
+      ports:
+        - "8889:8888"
+        - "4040:4040"
+        - "7070:7070"
+      env_file:
+        - .env/minio.env
+      stdin_open: true
+      tty: true
+      restart: always
+      depends_on:
+        object-storage:
+          condition: service_healthy
+        postgres:
+          condition: service_healthy
+        nessie:
+          condition: service_healthy
+        airflow:
+          condition: service_healthy
 
-  trino:
-    image: trinodb/trino:467
-    container_name: trino
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./trino/etc:/etc/trino:rw
-      - ./trino/data:/var/trino:rw
-    env_file:
-      - .env/minio.env
-    environment:
-      - JAVA_TOOL_OPTIONS=-Duser.timezone=UTC
-    depends_on:
-      postgres:
-        condition: service_healthy
-      object-storage:
-        condition: service_healthy
-      nessie:
-        condition: service_healthy
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/info || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    trino:
+      image: trinodb/trino:467
+      container_name: trino
+      ports:
+        - "8080:8080"
+      volumes:
+        - ./trino/etc:/etc/trino:rw
+        - ./trino/data:/var/trino:rw
+      env_file:
+        - .env/minio.env
+      environment:
+        - JAVA_TOOL_OPTIONS=-Duser.timezone=UTC
+      depends_on:
+        postgres:
+          condition: service_healthy
+        object-storage:
+          condition: service_healthy
+        nessie:
+          condition: service_healthy
+        airflow:
+          condition: service_healthy
+      restart: always
+      healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/info || exit 1"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
-  superset:
-    build:
-      context: ./superset
-      dockerfile: superset.Dockerfile
-    container_name: superset
-    depends_on:
-      postgres:
-        condition: service_healthy
-      trino:
-        condition: service_healthy
-      nessie:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    env_file: 
-      - .env/postgres.env
-      - .env/superset.env
-    ports:
-      - "8088:8088"
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8088/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+    superset:
+      build:
+        context: ./superset
+        dockerfile: superset.Dockerfile
+      container_name: superset
+      depends_on:
+        postgres:
+          condition: service_healthy
+        trino:
+          condition: service_healthy
+        nessie:
+          condition: service_healthy
+        airflow:
+          condition: service_healthy
+      env_file: 
+        - .env/postgres.env
+        - .env/superset.env
+      ports:
+        - "8088:8088"
+      restart: always
+      healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost:8088/health || exit 1"]
+        interval: 10s
+        timeout: 5s
+        retries: 3
