@@ -14,3 +14,7 @@ minio_data/nyc-project
 /postgres/
 !/postgres/init
 !/postgres/postgres.Dockerfile
+
+#Ignore Dags
+./airflow/dags/
+./airflow/logs
