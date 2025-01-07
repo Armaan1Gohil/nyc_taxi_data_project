@@ -5,7 +5,7 @@ class WebScraper:
     def __init__(self, url):
         self.url = url
     
-    def fetch_links(self, title_filter=None):
+    def get_links(self, title_filter=None):
         try:
             html_response = requests.get(self.url)
             html_response.raise_for_status()
@@ -14,5 +14,6 @@ class WebScraper:
 
         soup = BeautifulSoup(html_response.text, 'html.parser')
         if title_filter:
-            return soup.find_all('a', attrs={'title': title_filter})
+            tags = soup.find_all('a', attrs={'title': title_filter})
+            return [tag['href'] for tag in tags]
         return soup.find_all('a')

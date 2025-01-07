@@ -10,11 +10,11 @@ default_args = {
 with DAG(
     dag_id='download_yellow_taxi_file',
     default_args=default_args,
-    schedule_interval='@daily',
+    schedule_interval=datetime.timedelta(minutes=5),
     catchup=False
 ) as dag:
     
     run_ingestion = BashOperator(
         task_id = 'run_ingestion_script',
-        bash_command = 'docker exec extraction python /data_project/ingestion/ingestion_code/main.py --2018'
+        bash_command = 'docker exec extraction python /data_project/ingestion/ingestion_code/main.py --year 2018'
     )

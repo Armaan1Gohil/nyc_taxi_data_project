@@ -27,6 +27,7 @@ services:
     container_name: airflow
     env_file:
       - .env/airflow.env
+      - .env/postgres.env
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/plugins:/opt/airflow/plugins
@@ -54,6 +55,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     env_file:
       - .env/airflow.env
+      - .env/postgres.env
     depends_on:
       - postgres
 

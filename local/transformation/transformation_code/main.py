@@ -1,13 +1,26 @@
 from spark_utils import init_spark
 from data_cleaning import clean_data, replace_zero_with_median
 from dimension_table import create_datetime_dimension
+import argparse
 
 if __name__ == "__main__":
     # Initialize Spark
     spark, sc = init_spark()
 
+    # Arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--year', type=int, required=True, help='Year of the data to be processed')
+    parser.add_argument('--month', type=int, required=True, help='Month of the data to be processed')
+
+    args = parser.parse_args()
+
+    year = args.year
+    maonth = args.month
+    catalog = 'nessie'
+    namespace = 'nyc_project_db'
+
     # Data path
-    data_path = '../raw_data/2019/01/*.parquet'
+    s3_path = 's3a://nyc-project/raw-data/'
     
     # Read data and apply schema
     df = spark.read.option('headers', True).parquet(data_path)

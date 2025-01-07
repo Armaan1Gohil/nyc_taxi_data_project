@@ -1,18 +1,17 @@
-from bs4 import BeautifulSoup
-import requests
-from data_staging import DataProcessor
-from minio_client import MinioClient
-from web_scraper import WebScraper
-import os
+from ingestion.utils import DataProcessor
+from ingestion.utils import MinioClient
 import pandas as pd
 
 def main():
     minio_client = MinioClient()
     data_processor = DataProcessor()
 
+    # Create MinIO bucket if it doesn't exist
     bucket_name = 'nyc-project'
-    dimension_path = 'raw-data/dim-table'
+    minio_client.create_bucket(bucket_name)
+                               
 
+    dimension_path = 'raw-data/dim-table'
 
     taxi_zone_lookup_url = 'https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv' # Download taxi zone dim table
     taxi_zone_buffer = data_processor.download_file(taxi_zone_lookup_url)

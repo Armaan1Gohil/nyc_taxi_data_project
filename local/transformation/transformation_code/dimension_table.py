@@ -26,9 +26,9 @@ def create_datetime_dimension(df, datetime_col, dim_name, sc):
 
     def get_datetime_id(date_time):
         return datetime_id_broadcast.value.get(date_time, None)
-    
+
     get_datetime_id_udf = F.udf(get_datetime_id, types.IntegerType())
-    
+
     df = df.withColumn(f'{dim_name}_id', get_datetime_id_udf(col(datetime_col)))
-    
+
     return df, dim_df
