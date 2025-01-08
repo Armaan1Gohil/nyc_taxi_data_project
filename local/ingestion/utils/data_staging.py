@@ -1,7 +1,5 @@
-import os
 import io
 import requests
-from minio_client import MinioClient
 
 class DataProcessor:
 

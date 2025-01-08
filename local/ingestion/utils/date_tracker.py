@@ -1,6 +1,5 @@
 import json
-import os
-from ingestion.ingestion_code.download_file.minio_client import MinioClient
+from ingestion.utils import MinioClient
 
 class DateTracker:
     minio_client = MinioClient()

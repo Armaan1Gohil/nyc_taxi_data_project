@@ -15,5 +15,5 @@ class WebScraper:
         soup = BeautifulSoup(html_response.text, 'html.parser')
         if title_filter:
             tags = soup.find_all('a', attrs={'title': title_filter})
-            return [tag['href'] for tag in tags]
+            return [tag['href'].strip() for tag in tags]
         return soup.find_all('a')

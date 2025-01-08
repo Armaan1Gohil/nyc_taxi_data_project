@@ -34,6 +34,16 @@ class MinioClient:
                 self.s3.create_bucket(Bucket=bucket_name)
             else:
                 raise
+    
+    def check_bucket(self, bucket_name):
+        try:
+            self.s3.head_bucket(Bucket=bucket_name)
+        except ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                return False
+            else:
+                raise
+        return True
 
     def upload_file(self, bucket_name, object_name, file):
         try:

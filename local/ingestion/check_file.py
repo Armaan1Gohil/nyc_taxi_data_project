@@ -1,5 +1,5 @@
 # from date_tracker import DateTracker
-from web_scraper import WebScraper
+from ingestion.utils.web_scraper import WebScraper
 
 def main():
     page_url = "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page"

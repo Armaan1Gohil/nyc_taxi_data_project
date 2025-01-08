@@ -1,6 +1,6 @@
 import argparse
-from ingestion.utils import DataProcessor
-from ingestion.utils import MinioClient
+from utils import DataProcessor
+from utils import MinioClient
 
 
 def main(download_year, download_month):
